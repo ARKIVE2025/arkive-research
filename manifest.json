@@ -2,7 +2,7 @@
   "name": "Arkive Research Browser",
   "short_name": "Arkive",
   "description": "A research browser with integrated note-taking for students and teachers",
-  "start_url": "/arkive_tube.html",
+  "start_url": "/arkive-research/arkive_tube.html",
   "display": "standalone",
   "background_color": "#1a1a1a",
   "theme_color": "#ff7700",
