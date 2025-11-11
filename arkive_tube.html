@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arkive Research Browser</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-bg: #1a1a1a;
+            --secondary-bg: #242424;
+            --card-bg: #2a2a2a;
+            --accent: #ff7700;
+            --accent-dark: #cc5500;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            display: flex;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 260px;
+            background-color: var(--secondary-bg);
+            padding: 20px 0;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .logo i {
+            color: var(--accent);
+            font-size: 28px;
+            margin-right: 10px;
+        }
+
+        .logo h1 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .nav-section {
+            margin-bottom: 30px;
+        }
+
+        .nav-section h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            padding: 0 20px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 119, 0, 0.1);
+            color: var(--accent);
+            border-left: 3px solid var(--accent);
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--secondary-bg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .browser-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .browser-toolbar {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            background-color: var(--card-bg);
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .browser-nav-btns {
+            display: flex;
+            gap: 5px;
+        }
+
+        .nav-btn {
+            background-color: var(--secondary-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .url-bar {
+            flex: 1;
+            display: flex;
+            background-color: var(--secondary-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .url-bar input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 10px 15px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .url-bar input:focus {
+            outline: none;
+        }
+
+        .url-bar button {
+            background-color: var(--accent);
+            border: none;
+            color: white;
+            padding: 0 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .url-bar button:hover {
+            background-color: var(--accent-dark);
+        }
+
+        .browser-frame {
+            flex: 1;
+            background-color: white;
+            border: none;
+            width: 100%;
+        }
+
+        .iframe-blocked-message {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .iframe-blocked-message i {
+            font-size: 48px;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .notes-panel {
+            width: 400px;
+            background-color: var(--secondary-bg);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .notes-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notes-header h2 {
+            font-size: 18px;
+        }
+
+        .notes-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .note-section {
+            margin-bottom: 25px;
+        }
+
+        .note-section h3 {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .note-input {
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .note-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .note-input.small {
+            min-height: auto;
+            height: 38px;
+        }
+
+        .current-page-info {
+            background-color: var(--card-bg);
+            padding: 12px;
+            border-radius: var(--border-radius);
+            font-size: 13px;
+            color: var(--text-secondary);
+            word-break: break-all;
+        }
+
+        .highlights-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .highlight-item {
+            background-color: var(--card-bg);
+            padding: 12px;
+            border-radius: var(--border-radius);
+            border-left: 3px solid var(--accent);
+            position: relative;
+        }
+
+        .highlight-text {
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 5px;
+        }
+
+        .highlight-meta {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .delete-highlight {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .delete-highlight:hover {
+            color: #ff6b6b;
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-dark);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(255, 119, 0, 0.1);
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .saved-notes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .saved-note-card {
+            background-color: var(--secondary-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .saved-note-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .saved-note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .saved-note-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .saved-note-url {
+            font-size: 12px;
+            color: var(--accent);
+            word-break: break-all;
+            cursor: pointer;
+        }
+
+        .saved-note-url:hover {
+            text-decoration: underline;
+        }
+
+        .saved-note-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .saved-note-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .tag {
+            background-color: rgba(255, 119, 0, 0.2);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+        }
+
+        .saved-note-meta {
+            font-size: 11px;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .note-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 5px;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            color: var(--accent);
+        }
+
+        .search-bar {
+            padding: 15px 20px;
+            background-color: var(--secondary-bg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .search-bar input {
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 10px 15px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent);
+            color: white;
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: rgba(255, 119, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        #browser-view, #saved-notes-view {
+            display: none;
+            height: 100%;
+        }
+
+        #browser-view.active, #saved-notes-view.active {
+            display: flex;
+        }
+
+        .view-container {
+            flex: 1;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <h1>Arkive Research</h1>
+        </div>
+        
+        <div class="nav-section">
+            <h3>Navigation</h3>
+            <div class="nav-item active" data-view="browser">
+                <i class="fas fa-globe"></i>
+                <span>Browser</span>
+            </div>
+            <div class="nav-item" data-view="saved-notes">
+                <i class="fas fa-bookmark"></i>
+                <span>Saved Notes</span>
+            </div>
+        </div>
+        
+        <div class="nav-section">
+            <h3>Tools</h3>
+            <div class="nav-item" id="export-btn">
+                <i class="fas fa-download"></i>
+                <span>Export All</span>
+            </div>
+            <div class="nav-item" id="clear-data-btn">
+                <i class="fas fa-trash"></i>
+                <span>Clear All Data</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="header">
+            <div class="quick-actions">
+                <button class="btn btn-small" id="save-current-note-btn">
+                    <i class="fas fa-save"></i> Save Current Note
+                </button>
+                <button class="btn btn-outline btn-small" id="clear-current-btn">
+                    <i class="fas fa-eraser"></i> Clear Current
+                </button>
+            </div>
+            <div class="user-profile">
+                <div class="user-avatar">AR</div>
+                <span>Researcher</span>
+            </div>
+        </div>
+
+        <!-- Browser View -->
+        <div id="browser-view" class="content-area active">
+            <div class="browser-section">
+                <div class="browser-toolbar">
+                    <div class="browser-nav-btns">
+                        <button class="nav-btn" id="back-btn" disabled>
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <button class="nav-btn" id="forward-btn" disabled>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button class="nav-btn" id="refresh-btn">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div>
+                    <div class="url-bar">
+                        <input type="text" id="url-input" placeholder="Enter URL (e.g., https://wikipedia.org)">
+                        <button id="go-btn">
+                            <i class="fas fa-arrow-right"></i> Go
+                        </button>
+                    </div>
+                </div>
+                <iframe id="browser-frame" class="browser-frame"></iframe>
+                <div id="iframe-blocked" class="iframe-blocked-message">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>This site cannot be displayed</h3>
+                    <p>Some websites prevent being displayed in frames for security reasons.<br>
+                    Try a different URL or use the notes panel to save information.</p>
+                </div>
+            </div>
+            
+            <div class="notes-panel">
+                <div class="notes-header">
+                    <h2><i class="fas fa-sticky-note"></i> Research Notes</h2>
+                </div>
+                <div class="notes-content">
+                    <div class="note-section">
+                        <h3>Current Page</h3>
+                        <div class="current-page-info" id="current-page-info">
+                            No page loaded
+                        </div>
+                    </div>
+                    
+                    <div class="note-section">
+                        <h3>Title</h3>
+                        <input type="text" class="note-input small" id="note-title" placeholder="Enter note title...">
+                    </div>
+                    
+                    <div class="note-section">
+                        <h3>Main Notes</h3>
+                        <textarea class="note-input" id="main-notes" placeholder="Write your research notes here..."></textarea>
+                    </div>
+                    
+                    <div class="note-section">
+                        <h3>Key Highlights</h3>
+                        <textarea class="note-input" id="highlight-input" placeholder="Paste important quotes or snippets..." style="min-height: 60px;"></textarea>
+                        <button class="btn btn-small" id="add-highlight-btn" style="margin-top: 10px; width: 100%;">
+                            <i class="fas fa-plus"></i> Add Highlight
+                        </button>
+                        <div class="highlights-list" id="highlights-list"></div>
+                    </div>
+                    
+                    <div class="note-section">
+                        <h3>Tags</h3>
+                        <input type="text" class="note-input small" id="tags-input" placeholder="research, biology, climate...">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Saved Notes View -->
+        <div id="saved-notes-view" class="view-container">
+            <div class="search-bar">
+                <input type="text" id="search-notes" placeholder="Search notes by title, content, tags, or URL...">
+            </div>
+            <div class="saved-notes-list" id="saved-notes-list"></div>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        const state = {
+            currentNote: {
+                title: '',
+                url: '',
+                notes: '',
+                highlights: [],
+                tags: []
+            },
+            savedNotes: [],
+            history: [],
+            historyIndex: -1
+        };
+
+        // Initialize
+        function init() {
+            loadData();
+            setupEventListeners();
+            renderSavedNotes();
+            updateNavigationButtons();
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Navigation
+            document.querySelectorAll('.nav-item[data-view]').forEach(item => {
+                item.addEventListener('click', () => switchView(item.dataset.view));
+            });
+
+            // Browser controls
+            document.getElementById('go-btn').addEventListener('click', navigateToUrl);
+            document.getElementById('url-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') navigateToUrl();
+            });
+            document.getElementById('back-btn').addEventListener('click', goBack);
+            document.getElementById('forward-btn').addEventListener('click', goForward);
+            document.getElementById('refresh-btn').addEventListener('click', refresh);
+
+            // Notes
+            document.getElementById('note-title').addEventListener('input', (e) => {
+                state.currentNote.title = e.target.value;
+            });
+            document.getElementById('main-notes').addEventListener('input', (e) => {
+                state.currentNote.notes = e.target.value;
+            });
+            document.getElementById('tags-input').addEventListener('input', (e) => {
+                state.currentNote.tags = e.target.value.split(',').map(t => t.trim()).filter(t => t);
+            });
+            document.getElementById('add-highlight-btn').addEventListener('click', addHighlight);
+            
+            // Actions
+            document.getElementById('save-current-note-btn').addEventListener('click', saveCurrentNote);
+            document.getElementById('clear-current-btn').addEventListener('click', clearCurrentNote);
+            document.getElementById('export-btn').addEventListener('click', exportData);
+            document.getElementById('clear-data-btn').addEventListener('click', clearAllData);
+            document.getElementById('search-notes').addEventListener('input', searchNotes);
+
+            // Iframe load handling
+            const iframe = document.getElementById('browser-frame');
+            iframe.addEventListener('load', handleIframeLoad);
+        }
+
+        // Browser Functions
+        function navigateToUrl() {
+            let url = document.getElementById('url-input').value.trim();
+            if (!url) return;
+
+            // Add https:// if no protocol
+            if (!url.match(/^https?:\/\//)) {
+                url = 'https://' + url;
+            }
+
+            const iframe = document.getElementById('browser-frame');
+            iframe.style.display = 'block';
+            document.getElementById('iframe-blocked').style.display = 'none';
+            
+            try {
+                iframe.src = url;
+                
+                // Update history
+                if (state.historyIndex < state.history.length - 1) {
+                    state.history = state.history.slice(0, state.historyIndex + 1);
+                }
+                state.history.push(url);
+                state.historyIndex++;
+                updateNavigationButtons();
+                
+                // Update current note URL
+                state.currentNote.url = url;
+                document.getElementById('current-page-info').textContent = url;
+                
+            } catch (error) {
+                showToast('Error loading URL', 'error');
+            }
+        }
+
+        function handleIframeLoad() {
+            const iframe = document.getElementById('browser-frame');
+            try {
+                // Try to access iframe content - will fail if blocked
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                
+                // If we can access it, try to get the title
+                if (iframeDoc && iframeDoc.title) {
+                    if (!state.currentNote.title) {
+                        document.getElementById('note-title').value = iframeDoc.title;
+                        state.currentNote.title = iframeDoc.title;
+                    }
+                }
+            } catch (error) {
+                // Cross-origin restriction - show message
+                iframe.style.display = 'none';
+                document.getElementById('iframe-blocked').style.display = 'flex';
+            }
+        }
+
+        function goBack() {
+            if (state.historyIndex > 0) {
+                state.historyIndex--;
+                const url = state.history[state.historyIndex];
+                document.getElementById('url-input').value = url;
+                document.getElementById('browser-frame').src = url;
+                state.currentNote.url = url;
+                document.getElementById('current-page-info').textContent = url;
+                updateNavigationButtons();
+            }
+        }
+
+        function goForward() {
+            if (state.historyIndex < state.history.length - 1) {
+                state.historyIndex++;
+                const url = state.history[state.historyIndex];
+                document.getElementById('url-input').value = url;
+                document.getElementById('browser-frame').src = url;
+                state.currentNote.url = url;
+                document.getElementById('current-page-info').textContent = url;
+                updateNavigationButtons();
+            }
+        }
+
+        function refresh() {
+            const iframe = document.getElementById('browser-frame');
+            if (iframe.src) {
+                iframe.src = iframe.src;
+            }
+        }
+
+        function updateNavigationButtons() {
+            document.getElementById('back-btn').disabled = state.historyIndex <= 0;
+            document.getElementById('forward-btn').disabled = state.historyIndex >= state.history.length - 1;
+        }
+
+        // Notes Functions
+        function addHighlight() {
+            const input = document.getElementById('highlight-input');
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            const highlight = {
+                id: Date.now(),
+                text: text,
+                timestamp: new Date().toISOString()
+            };
+            
+            state.currentNote.highlights.push(highlight);
+            input.value = '';
+            renderHighlights();
+        }
+
+        function renderHighlights() {
+            const container = document.getElementById('highlights-list');
+            
+            if (state.currentNote.highlights.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); font-size: 13px; margin-top: 10px;">No highlights yet</p>';
+                return;
+            }
+            
+            container.innerHTML = state.currentNote.highlights.map(h => `
+                <div class="highlight-item">
+                    <button class="delete-highlight" onclick="deleteHighlight(${h.id})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="highlight-text">${h.text}</div>
+                    <div class="highlight-meta">${new Date(h.timestamp).toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+
+        function deleteHighlight(id) {
+            state.currentNote.highlights = state.currentNote.highlights.filter(h => h.id !== id);
+            renderHighlights();
+        }
+
+        function saveCurrentNote() {
+            if (!state.currentNote.title && !state.currentNote.notes && state.currentNote.highlights.length === 0) {
+                showToast('Please add a title or notes before saving', 'error');
+                return;
+            }
+            
+            const note = {
+                id: Date.now(),
+                title: state.currentNote.title || 'Untitled Note',
+                url: state.currentNote.url || '',
+                notes: state.currentNote.notes || '',
+                highlights: [...state.currentNote.highlights],
+                tags: [...state.currentNote.tags],
+                savedAt: new Date().toISOString()
+            };
+            
+            state.savedNotes.unshift(note);
+            saveData();
+            renderSavedNotes();
+            showToast('Note saved successfully!');
+            
+            // Optionally clear current note
+            // clearCurrentNote();
+        }
+
+        function clearCurrentNote() {
+            if (confirm('Clear current note? This will not affect saved notes.')) {
+                state.currentNote = {
+                    title: '',
+                    url: state.currentNote.url, // Keep URL
+                    notes: '',
+                    highlights: [],
+                    tags: []
+                };
+                
+                document.getElementById('note-title').value = '';
+                document.getElementById('main-notes').value = '';
+                document.getElementById('tags-input').value = '';
+                document.getElementById('highlight-input').value = '';
+                renderHighlights();
+                showToast('Current note cleared');
+            }
+        }
+
+        function renderSavedNotes() {
+            const container = document.getElementById('saved-notes-list');
+            
+            if (state.savedNotes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-bookmark"></i>
+                        <h3>No saved notes yet</h3>
+                        <p>Start browsing and taking notes to build your research collection</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = state.savedNotes.map(note => `
+                <div class="saved-note-card">
+                    <div class="saved-note-header">
+                        <div style="flex: 1;">
+                            <div class="saved-note-title">${note.title}</div>
+                            ${note.url ? `<div class="saved-note-url" onclick="loadUrl('${note.url}')">${note.url}</div>` : ''}
+                        </div>
+                        <div class="note-actions">
+                            <button class="action-btn" onclick="loadNote(${note.id})" title="Load into browser">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>
+                            <button class="action-btn" onclick="deleteNote(${note.id})" title="Delete note">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    ${note.notes ? `<div class="saved-note-content">${note.notes}</div>` : ''}
+                    
+                    ${note.highlights.length > 0 ? `
+                        <div class="saved-note-content">
+                            <strong>Highlights:</strong><br>
+                            ${note.highlights.map(h => `• ${h.text}`).join('<br>')}
+                        </div>
+                    ` : ''}
+                    
+                    ${note.tags.length > 0 ? `
+                        <div class="saved-note-tags">
+                            ${note.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="saved-note-meta">
+                        <span>${new Date(note.savedAt).toLocaleString()}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadNote(id) {
+            const note = state.savedNotes.find(n => n.id === id);
+            if (!note) return;
+            
+            // Switch to browser view
+            switchView('browser');
+            
+            // Load the URL if available
+            if (note.url) {
+                document.getElementById('url-input').value = note.url;
+                navigateToUrl();
+            }
+            
+            // Load note data into current note
+            state.currentNote = {
+                title: note.title,
+                url: note.url,
+                notes: note.notes,
+                highlights: [...note.highlights],
+                tags: [...note.tags]
+            };
+            
+            document.getElementById('note-title').value = note.title;
+            document.getElementById('main-notes').value = note.notes;
+            document.getElementById('tags-input').value = note.tags.join(', ');
+            renderHighlights();
+            
+            showToast('Note loaded into browser');
+        }
+
+        function loadUrl(url) {
+            switchView('browser');
+            document.getElementById('url-input').value = url;
+            navigateToUrl();
+        }
+
+        function deleteNote(id) {
+            if (confirm('Delete this note? This cannot be undone.')) {
+                state.savedNotes = state.savedNotes.filter(n => n.id !== id);
+                saveData();
+                renderSavedNotes();
+                showToast('Note deleted');
+            }
+        }
+
+        function searchNotes() {
+            const query = document.getElementById('search-notes').value.toLowerCase().trim();
+            const container = document.getElementById('saved-notes-list');
+            
+            if (!query) {
+                renderSavedNotes();
+                return;
+            }
+            
+            const filtered = state.savedNotes.filter(note => 
+                note.title.toLowerCase().includes(query) ||
+                note.notes.toLowerCase().includes(query) ||
+                note.url.toLowerCase().includes(query) ||
+                note.tags.some(tag => tag.toLowerCase().includes(query)) ||
+                note.highlights.some(h => h.text.toLowerCase().includes(query))
+            );
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>No results found</h3>
+                        <p>Try a different search term</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filtered.map(note => `
+                <div class="saved-note-card">
+                    <div class="saved-note-header">
+                        <div style="flex: 1;">
+                            <div class="saved-note-title">${note.title}</div>
+                            ${note.url ? `<div class="saved-note-url" onclick="loadUrl('${note.url}')">${note.url}</div>` : ''}
+                        </div>
+                        <div class="note-actions">
+                            <button class="action-btn" onclick="loadNote(${note.id})" title="Load into browser">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>
+                            <button class="action-btn" onclick="deleteNote(${note.id})" title="Delete note">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    ${note.notes ? `<div class="saved-note-content">${note.notes}</div>` : ''}
+                    
+                    ${note.highlights.length > 0 ? `
+                        <div class="saved-note-content">
+                            <strong>Highlights:</strong><br>
+                            ${note.highlights.map(h => `• ${h.text}`).join('<br>')}
+                        </div>
+                    ` : ''}
+                    
+                    ${note.tags.length > 0 ? `
+                        <div class="saved-note-tags">
+                            ${note.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="saved-note-meta">
+                        <span>${new Date(note.savedAt).toLocaleString()}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // View Management
+        function switchView(view) {
+            document.getElementById('browser-view').classList.remove('active');
+            document.getElementById('saved-notes-view').classList.remove('active');
+            
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            
+            if (view === 'browser') {
+                document.getElementById('browser-view').classList.add('active');
+                document.querySelector('.nav-item[data-view="browser"]').classList.add('active');
+            } else if (view === 'saved-notes') {
+                document.getElementById('saved-notes-view').classList.add('active');
+                document.querySelector('.nav-item[data-view="saved-notes"]').classList.add('active');
+                renderSavedNotes();
+            }
+        }
+
+        // Data Management
+        function saveData() {
+            const data = {
+                savedNotes: state.savedNotes,
+                history: state.history,
+                historyIndex: state.historyIndex
+            };
+            // In-memory storage only (no localStorage as per requirements)
+            console.log('Data saved to memory:', data);
+        }
+
+        function loadData() {
+            // Initialize with welcome note if no data
+            if (state.savedNotes.length === 0) {
+                const welcomeNote = {
+                    id: Date.now(),
+                    title: 'Welcome to Arkive Research Browser',
+                    url: '',
+                    notes: 'This is your research companion! Use the browser to navigate websites and take notes in real-time. Your notes are saved in memory for this session.\n\nFeatures:\n- Browse websites in the iframe\n- Take structured notes\n- Save important highlights\n- Organize with tags\n- Search through all your notes',
+                    highlights: [
+                        {
+                            id: 1,
+                            text: 'Perfect for students and teachers doing online research',
+                            timestamp: new Date().toISOString()
+                        }
+                    ],
+                    tags: ['welcome', 'guide', 'tutorial'],
+                    savedAt: new Date().toISOString()
+                };
+                state.savedNotes.push(welcomeNote);
+            }
+        }
+
+        function exportData() {
+            const data = {
+                exportDate: new Date().toISOString(),
+                notes: state.savedNotes,
+                totalNotes: state.savedNotes.length
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `arkive-research-export-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('Research notes exported successfully!');
+        }
+
+        function clearAllData() {
+            if (confirm('⚠️ Clear ALL saved notes? This cannot be undone!')) {
+                state.savedNotes = [];
+                state.currentNote = {
+                    title: '',
+                    url: '',
+                    notes: '',
+                    highlights: [],
+                    tags: []
+                };
+                state.history = [];
+                state.historyIndex = -1;
+                
+                saveData();
+                renderSavedNotes();
+                clearCurrentNote();
+                
+                document.getElementById('browser-frame').src = '';
+                document.getElementById('url-input').value = '';
+                document.getElementById('current-page-info').textContent = 'No page loaded';
+                
+                showToast('All data cleared');
+            }
+        }
+
+        // UI Helpers
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i> ${message}`;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Initialize app
+        init();
+    </script>
+</body>
+</html>
