@@ -1,6 +1,6 @@
 const CACHE_NAME = 'arkive-research-v1';
 const urlsToCache = [
-  '/arkive_tube.html',
+  '/arkive-research/arkive_tube.html',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 
